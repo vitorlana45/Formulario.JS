@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Formulário de Funcionários</title>
+    
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+    
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4; 
+                color: #333; 
+            }
+    
+            h1 {
+                background-color: #8a6804; 
+                color: #fff; 
+                font-size: 40px;
+                padding: 20px;
+                text-align: center;
+            }
+    
+            form {
+                background-color: #fff; 
+                border: 2px solid #8a6804; 
+                border-radius: 10px;
+                padding: 20px;
+                max-width: 400px;
+                margin: 20px auto;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+            }
+    
+            label {
+                display: block;
+                font-size: 18px;
+                margin-bottom: 8px;
+                
+            }
+    
+            input {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 15px;
+                border: 1px solid #ccc; 
+                border-radius: 5px;
+                box-sizing: border-box;
+            }
+    
+            button {
+                background-color: #8a6804; 
+                color: #fff; 
+                padding: 12px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+            }
+    
+            button:hover {
+                background-color: #5a3b01; 
+            }
+    
+            #resultado {
+                padding: 10px;
+               
+            }
+        </style>
+</head>
+
+<body>
+
+    <div id="bordaContainer">
+        <div>
+            <h1 id="Titulo">Formulário</h1>
+        </div>
+
+        <form id="formCadastro" onsubmit="validarFormulario(); return false;">
+            <div id="container">
+                <div class="item-formulario">
+                    <label for="nome">Nome</label>
+                    <input type="text" id="nome" placeholder="Ex: João Silva">
+                </div>
+
+                <div class="item-formulario">
+                    <label for="idade">Idade</label>
+                    <input type="text" id="idade" placeholder="Ex: 24">
+                </div>
+
+                <div class="item-formulario">
+                    <label for="cargo">Cargo</label>
+                    <input type="text" id="cargo" placeholder="Ex: Advogado">
+                </div>
+
+                <div class="item-formulario">
+                    <label for="departamento">Departamento *</label>
+                    <input type="text" id="departamento" placeholder="Ex: Gerência Contratos">
+                </div>
+
+                <div class="item-formulario">
+                    <label for="linguagem">Linguagem de Programação*</label>
+                    <input type="text" id="linguagem" placeholder="Ex: Python">
+                </div>
+
+                <button type="button" onclick="criarFuncionario()">Cadastrar</button>
+
+                <div id="resultado"></div>
+            </div>
+        </form>
+
+
+
+    </div>
+
+    <script>
+        class Funcionario {
+            constructor(nome, idade, cargo) {
+                this.nome = nome;
+                this.idade = idade;
+                this.cargo = cargo;
+            }
+
+            seApresentar() {
+                return `Olá, me chamo ${this.nome}. Tenho ${this.idade} anos e sou ${this.cargo}.`;
+            }
+
+            trabalhar() {
+                return `${this.nome} está realizando suas atividades como ${this.cargo}.`;
+            }
+        }
+
+        class Gerente extends Funcionario {
+            constructor(nome, idade, cargo, departamento) {
+                super(nome, idade, cargo);
+                this.departamento = departamento;
+            }
+
+            gerenciar() {
+                return `${this.nome} está gerenciando o departamento ${this.departamento}.`;
+            }
+        }
+
+        class Desenvolvedor extends Funcionario {
+            constructor(nome, idade, cargo, linguagem) {
+                super(nome, idade, cargo);
+                this.linguagem = linguagem;
+            }
+
+            programar() {
+                return `${this.nome} está programando em ${this.linguagem}.`;
+            }
+        }
+
+        function criarFuncionario() {
+            const nome = document.getElementById('nome').value;
+            const idade = document.getElementById('idade').value;
+            const cargo = document.getElementById('cargo').value;
+            const departamento = document.getElementById('departamento').value;
+            const linguagem = document.getElementById('linguagem').value;
+
+            if (nome && idade && cargo) {
+                let funcionario;
+
+                if (departamento) {
+                    funcionario = new Gerente(nome, idade, cargo, departamento);
+                } else if (linguagem) {
+                    funcionario = new Desenvolvedor(nome, idade, cargo, linguagem);
+                } else {
+                    funcionario = new Funcionario(nome, idade, cargo);
+                }
+
+                mostrarResultado(funcionario);
+            } else {
+                alert(exibirErro())
+            }
+        }
+
+        function mostrarResultado(funcionario) {
+            const resultadoDiv = document.getElementById('resultado');
+            resultadoDiv.innerHTML = '';
+
+
+            const apresentacaoP = document.createElement('p');
+            apresentacaoP.textContent = funcionario.seApresentar();
+            resultadoDiv.appendChild(apresentacaoP);
+
+            const trabalharP = document.createElement('p');
+            trabalharP.textContent = funcionario.trabalhar();
+            resultadoDiv.appendChild(trabalharP);
+
+            if (funcionario instanceof Gerente) {
+                const gerenciarP = document.createElement('p');
+                gerenciarP.textContent = funcionario.gerenciar();
+                resultadoDiv.appendChild(gerenciarP);
+            } else if (funcionario instanceof Desenvolvedor) {
+                const programarP = document.createElement('p');
+                programarP.textContent = funcionario.programar();
+                resultadoDiv.appendChild(programarP);
+            }
+        }
+
+        function validarFormulario() {
+            const nomePessoa = document.getElementById('nome').value;
+            const idadePessoa = document.getElementById('idade').value;
+            const cargoPessoa = document.getElementById('cargo').value;
+            const departamentoPessoa = document.getElementById('departamento').value;
+            const linguagem = document.getElementById('linguagem').value;
+
+            if (!validarCampo(nomePessoa, 'string') ||
+                !validarCampo(idadePessoa, 'number') ||
+                !validarCampo(cargoPessoa, 'string') ||
+                !validarCampo(departamentoPessoa, 'string') ||
+                !validarCampo(linguagem, 'string')) {
+
+            } else {
+                alert("Olá, " + nomePessoa);
+
+            }
+        }
+
+        function validarCampo(valor, tipo) {
+            if (tipo === 'string' && typeof valor !== 'string') {
+                return false;
+            } else if (tipo === 'number' && isNaN(Number(valor))) {
+                return false;
+            }
+            return valor !== ''; 
+        }
+
+        function exibirErro(){
+            return "Preencha todos os campos obrigatórios (nome, idade, cargo)."
+        }
+
+
+    </script>
+
+</body>
+
+</html>
